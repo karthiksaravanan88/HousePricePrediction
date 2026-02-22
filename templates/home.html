@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boston House Price Prediction</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+            border-left: 5px solid #667eea;
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .result h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .result p {
+            color: #667eea;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        .error.show {
+            display: block;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            margin-top: 15px;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 House Price Prediction</h1>
+        <form id="predictionForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Crime Rate (CRIM)</label>
+                    <input type="number" id="crim" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Residential Land Zoned (ZN)</label>
+                    <input type="number" id="zn" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Industrial (INDUS)</label>
+                    <input type="number" id="indus" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Charles River (CHAS)</label>
+                    <input type="number" id="chas" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nitric Oxide (NOX)</label>
+                    <input type="number" id="nox" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Rooms (RM)</label>
+                    <input type="number" id="rm" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Age (AGE)</label>
+                    <input type="number" id="age" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Distance to Centers (DIS)</label>
+                    <input type="number" id="dis" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Highway Access (RAD)</label>
+                    <input type="number" id="rad" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Tax Rate (TAX)</label>
+                    <input type="number" id="tax" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Student-Teacher Ratio (PTRATIO)</label>
+                    <input type="number" id="ptratio" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Black Population (B)</label>
+                    <input type="number" id="b" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Lower Status Percentage (LSTAT)</label>
+                <input type="number" id="lstat" step="0.01" required>
+            </div>
+            
+            <button type="submit">Predict Price</button>
+            
+            <div class="loading" id="loading">
+                <p>Predicting... Please wait</p>
+            </div>
+            
+            <div class="error" id="error"></div>
+            
+            <div class="result" id="result">
+                <h3>Predicted House Price:</h3>
+                <p id="predictedPrice"></p>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Clear previous results
+            document.getElementById('error').classList.remove('show');
+            document.getElementById('result').classList.remove('show');
+            document.getElementById('loading').classList.add('show');
+            
+            // Collect form data
+            const data = {
+                'crim': parseFloat(document.getElementById('crim').value),
+                'zn': parseFloat(document.getElementById('zn').value),
+                'indus': parseFloat(document.getElementById('indus').value),
+                'chas': parseFloat(document.getElementById('chas').value),
+                'nox': parseFloat(document.getElementById('nox').value),
+                'rm': parseFloat(document.getElementById('rm').value),
+                'age': parseFloat(document.getElementById('age').value),
+                'dis': parseFloat(document.getElementById('dis').value),
+                'rad': parseFloat(document.getElementById('rad').value),
+                'tax': parseFloat(document.getElementById('tax').value),
+                'ptratio': parseFloat(document.getElementById('ptratio').value),
+                'b': parseFloat(document.getElementById('b').value),
+                'lstat': parseFloat(document.getElementById('lstat').value)
+            };
+            
+            try {
+                const response = await fetch('/predict_api', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ data: data })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const result = await response.json();
+                document.getElementById('loading').classList.remove('show');
+                document.getElementById('predictedPrice').textContent = '$' + result.toFixed(2) + 'k';
+                document.getElementById('result').classList.add('show');
+            } catch (error) {
+                document.getElementById('loading').classList.remove('show');
+                document.getElementById('error').textContent = 'Error: ' + error.message;
+                document.getElementById('error').classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>
